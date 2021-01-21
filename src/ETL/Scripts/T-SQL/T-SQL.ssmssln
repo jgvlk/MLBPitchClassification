@@ -5,12 +5,16 @@ VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Work", "Work\Work.ssmssqlproj", "{6137BA36-5FC8-40DC-9090-9FCD7658EA78}"
 EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "ETL", "ETL\ETL.ssmssqlproj", "{FA157805-2521-4054-898C-E78D0E7085F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Default = Default|Default
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6137BA36-5FC8-40DC-9090-9FCD7658EA78}.Default|Default.ActiveCfg = Default
+		{9B031353-7B1A-4F24-BBD6-9C6DAD6E06BB}.Default|Default.ActiveCfg = Default
+		{FA157805-2521-4054-898C-E78D0E7085F3}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
