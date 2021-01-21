@@ -1,0 +1,4 @@
+{
+    "python.pythonPath": "/usr/local/miniconda3/envs/py38-pypitch/bin/python",
+    "python.linting.pylintEnabled": true
+}
