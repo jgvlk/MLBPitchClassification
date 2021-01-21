@@ -1,0 +1,29 @@
+ColumnName,Type,Include,Unit,Definition
+des,result,0,,a brief text description of the result of the pitch
+id,id,0,,a unique identification number per pitch within a game; numbers increment by one for each pitch but are not consecutive between at bats
+type,result,0,,"a one-letter abbreviation for the result of the pitch: B, ball; S strike (including fouls); X in play"
+x,,0,,the horizontal location of the pitch as it crossed home plate as input by the Gameday stringer using the old Gameday coordinate system
+y,,0,,the vertical location of the pitch as it crossed home plate as input by the Gameday stringer using the old Gameday coordinate system
+start_speed,speed,1,mph,the pitch speed in three dimensions measured at the initial point y0
+end_speed,speed,1,mph,the pitch speed measured as it crossed the front of home plate
+sz_top,3d-space,1,ft,the distance from the ground to the top of the current batter's rulebook strike zone as measured from the video by the PITCHf/x operator
+sz_bot,3d-space,1,ft,the distance from the ground to the bottom of the current batter's rulebook strike zone; the PITCHf/x operator sets a line at the hollow of the knee for the bottom of the zone
+pfx_x,movement,1,in,the horizontal movement of the pitch between the release point and home plate as compared to a theoretical pitch thrown at the same speed with no spin-induced movement this parameter is measured at y=40 feet regardless of the y0 value
+pfx_z,movement,1,in,the vertical movement of the pitch between the release point and home plate as compared to a theoretical pitch thrown at the same speed with no spin-induced movement; this parameter is measured at y=40 feet regardless of the y0 value
+px,3d-space,1,ft,the left/right distance of the pitch from the middle of the plate as it crossed home plate; the PITCHf/x coordinate system is oriented to the catcher's/umpire's perspective with distances to the right being positive and to the left being negative
+pz,3d-space,1,ft,the height of the pitch as it crossed the front of home plate
+x0,trajectory,1,ft,the left/right distance of the pitch measured at the initial point
+y0,trajectory,1,ft,the distance in feet from home plate where the PITCHf/x system is set to measure the initial parameters
+z0,trajectory,1,ft,the height of the pitch measured at the initial point
+vx0,trajectory,1,ft/s,the velocity of the pitch in the x-direction measured at the initial point
+vy0,trajectory,1,ft/s,the velocity of the pitch in the y-direction measured at the initial point
+vz0,trajectory,1,ft/s,the velocity of the pitch in the z-direction measured at the initial point
+ax,trajectory,1,ft/s^2,the acceleration of the pitch in the x-direction measured at the initial point
+ay,trajectory,1,ft/s^2,the acceleration of the pitch in the y-direction measured at the initial point
+az,trajectory,1,ft/s^2,the acceleration of the pitch in the z-direction measured at the initial point
+break_y,trajectory,1,ft,the distance from home plate to the point in the pitch trajectory where the pitch achieved its greatest deviation from the straight line path between the release point and the front of home plate
+break_angle,trajectory,1,deg,the angle from vertical to the straight line path from the release point to where the pitch crossed the front of home plate as seen from the catcher's/umpire's perspective
+break_length,trajectory,1,in,the measurement of the greatest distance between the trajectory of the pitch at any point between the release point and the front of home plate and the straight line path from the release point and the front of home plate
+sv_id,id,0,,a date/time stamp of when the PITCHf/x tracking system first detected the pitch in the air; it is in the format YYMMDD_hhmmss
+pitch_type,class,0,,the most probable pitch type according to a neural net classification algorithm developed by Ross Paul of MLBAM
+type_confidence,class,0,,the value of the weight at the classification algorithm's output node corresponding to the most probable pitch type this value is multiplied by a factor of 1.5 if the pitch is known by MLBAM to be part of the pitcher's repertoire

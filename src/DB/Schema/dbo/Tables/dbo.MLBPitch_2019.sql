@@ -1,0 +1,32 @@
+﻿CREATE TABLE [dbo].[MLBPitch_2019](
+	[PitchID] INT NOT NULL IDENTITY(1,1),
+	[MLBGameID] [varchar](26) NOT NULL,
+	[PlayGUID] [varchar](36) NOT NULL,
+	[ID] [int] NOT NULL,
+	[EventNum] [int] NOT NULL,
+	[Des] [varchar](500) NOT NULL,
+	[DesEs] [varchar](500) NOT NULL,
+	[x0] [decimal](13, 2) NOT NULL,
+	[y0] [decimal](13, 2) NOT NULL,
+	[z0] [decimal](13, 2) NOT NULL,
+	[vx0] [decimal](13, 2) NOT NULL,
+	[vy0] [decimal](13, 2) NOT NULL,
+	[vz0] [decimal](13, 2) NOT NULL,
+	[ax0] [decimal](13, 2) NOT NULL,
+	[ay0] [decimal](13, 2) NOT NULL,
+	[az0] [decimal](13, 2) NOT NULL,
+	[px] [decimal](13, 2) NOT NULL,
+	[pz] [decimal](13, 2) NOT NULL,
+	[pfx_x] [decimal](13, 2) NOT NULL,
+	[pfx_z] [decimal](13, 2) NOT NULL,
+	[Break_y] [decimal](13, 2) NOT NULL,
+	[BreakAngle] [decimal](13, 2) NOT NULL,
+	[BreakLength] [decimal](13, 2) NOT NULL,
+	[StartSpeed] [decimal](13, 2) NOT NULL,
+	[EndSpeed] [decimal](13, 2) NOT NULL,
+	[Type] [varchar](25) NOT NULL,
+	[PitchType] [varchar](25) NOT NULL,
+	CONSTRAINT [pk_MLBPitch_2019] PRIMARY KEY ([PitchID])
+)
+GO
+
