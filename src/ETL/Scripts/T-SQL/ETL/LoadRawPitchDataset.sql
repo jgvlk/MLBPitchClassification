@@ -6,9 +6,14 @@ DROP TABLE [dbo].[MLBPitch_2019]
 GO
 
 
-DROP TABLE [dbo].[MLBPitch_2019]
 SELECT
-	p.[MLBGameID]
+	ROW_NUMBER() OVER (ORDER BY [StartTFSZulu]) AS [ID]
+	,p.[MLBGameID]
+	,pm.[ParkID]
+	,pm.[Name] AS [ParkName]
+	,pm.[City] AS [ParkCity]
+	,pm.[State] AS [ParkState]
+	,pm.[League] AS [ParkLeague]
 	,[PlayGUID_Pitch]
 	,[PlayGUID_Event]
 	,[Num]
@@ -73,6 +78,9 @@ INTO
 FROM
 	[PitchFX].[stg].[vw_Pitch] p
 	JOIN [PitchFX].[stg].[Game] g ON p.[MLBGameID] = g.[MLBGameID]
+	LEFT JOIN [Retrosheet].[dbo].[udf_MLBGameIDConstructor]() gid ON g.[MLBGameID] = gid.[MLBGameID]
+	LEFT JOIN [Retrosheet].[dbo].[Game] g2 ON gid.[GameID] = g2.[GameID]
+	LEFT JOIN [Retrosheet].[dbo].[ParkMaster] pm ON g2.[ParkID] = pm.[ParkID]
 WHERE
 	YEAR(g.[Date]) = 2019 AND
 	(
@@ -138,5 +146,10 @@ WHERE
 		[TypeConfidence] IS NOT NULL
 	)
 ORDER BY
-	[StartTFSZulu]
+	[ID]
+GO
+
+
+CREATE CLUSTERED INDEX [ixc_MLBPitch_2019] ON [dbo].[MLBPitch_2019]([ID])
+GO
 

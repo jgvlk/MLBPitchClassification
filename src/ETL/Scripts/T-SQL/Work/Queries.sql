@@ -64,6 +64,7 @@ SELECT
 FROM
 	[PitchFX].[stg].[Pitch] p
 	JOIN [PitchFX].[stg].[Game] g ON p.[MLBGameID] = g.[MLBGameID]
+	JOIN [Retrosheet].[
 WHERE
 	YEAR(g.[Date]) = 2019 AND
 	(
