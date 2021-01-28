@@ -20,6 +20,19 @@ class SessionManager(object):
         self.engine = engine
 
 
+def query_data_dictionary():
+    db = SessionManager()
+    conn = db.session.connection()
+
+    sql = 'SELECT * FROM [dbo].[DataDictionary] WHERE [Include] = 1 ORDER BY [ColumnName]'
+
+    df = pd.read_sql(sql, conn)
+
+    db.session.commit()
+
+    return 0, df
+
+
 def query_raw_data():
     '''
     Query raw dataset
@@ -37,7 +50,7 @@ def query_raw_data():
 
         print('||MSG', datetime.now(), '|| QUERYING PITCHES FROM DB')
 
-        sql = 'SELECT TOP 10000 * FROM [dbo].[MLBPitch_2019] ORDER BY NEWID()'
+        sql = 'SELECT * FROM [dbo].[MLBPitch_2019]'
 
         df = pd.read_sql(sql, conn)
 
@@ -54,33 +67,23 @@ def query_raw_data():
         return 1, df
 
 
-def query_pitcher_data(search_text, season):
+def query_pitcher_data(search_text):
     '''
     Query pitch data for a specific pitcher
     '''
 
     try:
-        try:
-            print('||MSG', datetime.now(), '|| FETCHING PITCHER''S PLAYER RECORD')
-
-            player = statsapi.lookup_player(search_text, season=season)
-
-            player_id = player[0]['id']
-            player_name = player[0]['firstLastName']
-            
-        except Exception as e:
-            print('||ERR', datetime.now(), '|| ERROR MESSAGE:', e)
-
-            raise
-
         db = SessionManager()
         conn = db.session.connection()
 
-        sql = 'SELECT * FROM [dbo].[MLBPitch_2019] WHERE [Pitcher] = ?'
+        sql = 'SELECT * FROM [dbo].[MLBPitch_2019] WHERE [PitcherFullName] LIKE ?'
+
+        player_name = search_text
+        query_arg = '%' + player_name + '%' 
 
         print('||MSG', datetime.now(), '|| QUERYING PITCHER RECORD FOR:', player_name)
 
-        df = pd.read_sql(sql, conn, params=[player_id])
+        df = pd.read_sql(sql, conn, params=[query_arg])
 
         return 0, df
 
