@@ -5,50 +5,52 @@ import pandas as pd
 from PyPitch.db import query_data_dictionary, query_raw_data, query_pitcher_data
 
 
-def load():
-    try:
-        retd = {}
+class Load():
 
-        # IMPORT DATA DICTIONARY #
-        ret1, df1 = import_data_dictionary()
+    def import_all_data(search_text):
+        try:
+            retd = {}
 
-        retd['ret1'] = ret1
+            # IMPORT DATA DICTIONARY #
+            ret1, df1 = import_data_dictionary()
 
-        if ret1 == 0:
-            print(df1.shape)
-            print(df1.head())
+            retd['ret1'] = ret1
 
-        # IMPORT ALL RAW DATA #
-        ret2, df2 = import_raw_data()
+            if ret1 == 0:
+                print(df1.shape)
+                print(df1.head())
 
-        retd['ret2'] = ret2
+            # IMPORT ALL RAW DATA #
+            ret2, df2 = import_raw_data()
 
-        if ret2 == 0:
-            print(df2.shape)
-            print(df2.head())
+            retd['ret2'] = ret2
 
-        # IMPORT PITCHER DATA #
-        ret3, df3 = import_pitcher_data('Lester')
+            if ret2 == 0:
+                print(df2.shape)
+                print(df2.head())
 
-        retd['ret3'] = ret3
+            # IMPORT PITCHER DATA #
+            ret3, df3 = import_pitcher_data(search_text)
 
-        if ret3 == 0:
-            print(df3.shape)
-            print(df3.head())
+            retd['ret3'] = ret3
 
-        s = retd.values()
+            if ret3 == 0:
+                print(df3.shape)
+                print(df3.head())
 
-        if 1 in s:
-            raise 'ERROR IMPORTING MODEL DATA'
+            s = retd.values()
 
-        response = [df1, df2, df3]
+            if 1 in s:
+                raise 'ERROR IMPORTING MODEL DATA'
 
-        return response
+            response = {'df_data_dictionary': df1, 'df_data': df2, 'df_data_pitcher': df3}
 
-    except Exception as e:
-        print('||ERR', datetime.now(), '|| ERROR MESSAGE:', e)
+            return response
 
-        return e
+        except Exception as e:
+            print('||ERR', datetime.now(), '|| ERROR MESSAGE:', e)
+
+            return e
 
 
 def import_data_dictionary():
