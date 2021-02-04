@@ -1,10 +1,13 @@
 from datetime import datetime
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pandas_profiling
+from scipy.stats import zscore
 import seaborn as sns
+from sklearn.preprocessing import StandardScaler
 
 from PyPitch.db import query_data_dictionary, query_raw_data, query_pitcher_data
 
@@ -22,7 +25,6 @@ class Load():
 
             if ret1 == 0:
                 print('||MSG', datetime.now(), '|| SHAPE:', df1.shape)
-                print('||MSG', datetime.now(), '|| HEAD:', df1.head())
 
             # IMPORT ALL RAW DATA #
             ret2, df2 = import_raw_data()
@@ -31,7 +33,6 @@ class Load():
 
             if ret2 == 0:
                 print('||MSG', datetime.now(), '|| SHAPE:', df2.shape)
-                print('||MSG', datetime.now(), '|| HEAD:', df2.head())
 
             # IMPORT PITCHER DATA #
             ret3, df3 = import_pitcher_data(search_text)
@@ -40,7 +41,6 @@ class Load():
 
             if ret3 == 0:
                 print('||MSG', datetime.now(), '|| SHAPE:', df3.shape)
-                print('||MSG', datetime.now(), '|| HEAD:', df3.head())
 
             s = retd.values()
 
@@ -74,6 +74,34 @@ class EDA():
 
         plt.show()
 
+    def correlation_rank(data, num_cols):
+        corr = data[num_cols].corr()
+
+        d = {}
+        for var in corr:
+            var_name = corr[var].name
+            ix = corr[var].index
+            corr_value = corr[var]
+
+            for i, element in enumerate(ix):
+                l = [var_name, element]
+                l.sort()
+
+                if var_name != element:
+                    var_pair = l[0] + '__' + l[1]
+                    d[var_pair] = corr_value[i]
+
+        # Sort var pairs by correlation values
+        d_sort_values = sorted(d.items(), key=lambda x: x[1], reverse=False)
+        d_sort_values_rev = sorted(d.items(), key=lambda x: x[1], reverse=True)
+
+        # Define highest positive & negative correlations
+        top10_neg = list(d_sort_values)[:10]
+        top10_pos = list(d_sort_values_rev)[:10]
+
+        return top10_neg, top10_pos
+
+
     def describe(df, out_file):
         df_describe = df.describe()
         df_describe.to_csv(out_file)
@@ -103,6 +131,51 @@ class EDA():
     def profile(df, out_file):
         profile = pandas_profiling.ProfileReport(df)
         profile.to_file(out_file)
+
+
+class FeatureEng():
+
+    def detect_outliers(col_names, data, std_thresh = 6):
+
+        d_outliers = {}
+
+        for column in col_names:
+
+            # Create z_score proxy for each column
+            data['z_score'] = np.absolute(zscore(data[column]))
+
+            # Check if there are NaNs in z_score
+            if data['z_score'].isnull().sum() > 0:
+                print('WARNING: NaNs found in data column: {}. More analysis may be necessary to ensure there are not outliers'.format(column))
+
+            # Determine if there are outliers, as defined by z_score threshold
+            outliers = data.loc[data.z_score > std_thresh, [column, 'z_score']]
+
+            # If there are no outliers
+            if outliers.shape[0] == 0:
+                print('No outliers for column {} at threshold of {} stdevs'.format(column, std_thresh))
+
+                d_outliers[column] = []
+
+            # If there are outliers
+            else:
+                print('{} outlier(s) found for column {} at threshold of {} stdevs'.format(outliers.shape[0], column, std_thresh))
+
+                l_column_outliers = []
+                for i,r in outliers.iterrows():
+                    l_column_outliers.append({'index': i, 'value': r[column], 'z_score': r['z_score']})
+
+                d_outliers[column] = l_column_outliers
+
+            # Drop z_score from data
+            data.drop('z_score', axis = 1, inplace = True)
+
+        return d_outliers
+
+    def var_scaling(data, column_names, transformer = StandardScaler(), tag = 'SS_'):
+        scaled_df = transformer.fit_transform(data.loc[:,column_names])
+
+        return pd.DataFrame(scaled_df, columns = [tag + col for col in column_names])
 
 
 def import_data_dictionary():
