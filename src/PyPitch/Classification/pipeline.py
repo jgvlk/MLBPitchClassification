@@ -3,7 +3,7 @@ from pathlib import Path
 from scipy.stats import yeojohnson
 from sklearn.preprocessing import MinMaxScaler
 
-from PyPitch.classification.utils import Load, EDA, FeatureEng
+from PyPitch.classification.utils import Load, FeatureEng
 
 
 class Pipeline():
@@ -31,13 +31,13 @@ class Pipeline():
 
         l_drop_cols = list(set(l_cols) - set(l_keep_cols))
         l_drop_cols.append('y0')
-        l_drop_cols.append('pfx_x')
-        l_drop_cols.append('pfx_z')
+        # l_drop_cols.append('pfx_x')
+        # l_drop_cols.append('pfx_z')
         l_drop_cols.append('Break_y')
         l_drop_cols.append('BreakAngle')
         l_drop_cols.append('BreakLength')
-        l_drop_cols.append('StartSpeed')
-        l_drop_cols.append('EndSpeed')
+        # l_drop_cols.append('StartSpeed')
+        # l_drop_cols.append('EndSpeed')
         l_drop_cols.append('sz_bot')
         l_drop_cols.append('sz_top')
         l_drop_cols.append('PitcherThrows')
@@ -58,9 +58,9 @@ class Pipeline():
             col_lambda = [i, l]
             yj_lam.append(col_lambda)
 
-        # NORMALIZE & STANDARDIZE #
-        df = FeatureEng.var_scaling(df, features, transformer=MinMaxScaler(), tag='')
+        # STANDARDIZE & NORMALIZE #
         df = FeatureEng.var_scaling(df, features, tag='')
+        df = FeatureEng.var_scaling(df, features, transformer=MinMaxScaler(), tag='')
 
         ## TRAIN/TEST SPLIT #
         train_size = int(len(df) * .7)

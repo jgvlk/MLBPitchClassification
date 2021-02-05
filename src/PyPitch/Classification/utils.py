@@ -12,51 +12,6 @@ from sklearn.preprocessing import StandardScaler
 from PyPitch.db import query_data_dictionary, query_raw_data, query_pitcher_data
 
 
-class Load():
-
-    def import_all_data(search_text):
-        try:
-            retd = {}
-
-            # IMPORT DATA DICTIONARY #
-            ret1, df1 = import_data_dictionary()
-
-            retd['ret1'] = ret1
-
-            if ret1 == 0:
-                print('||MSG', datetime.now(), '|| SHAPE:', df1.shape)
-
-            # IMPORT ALL RAW DATA #
-            ret2, df2 = import_raw_data()
-
-            retd['ret2'] = ret2
-
-            if ret2 == 0:
-                print('||MSG', datetime.now(), '|| SHAPE:', df2.shape)
-
-            # IMPORT PITCHER DATA #
-            ret3, df3 = import_pitcher_data(search_text)
-
-            retd['ret3'] = ret3
-
-            if ret3 == 0:
-                print('||MSG', datetime.now(), '|| SHAPE:', df3.shape)
-
-            s = retd.values()
-
-            if 1 in s:
-                raise 'ERROR IMPORTING MODEL DATA'
-
-            response = {'df_data_dictionary': df1, 'df_data': df2, 'df_data_pitcher': df3}
-
-            return response
-
-        except Exception as e:
-            print('||ERR', datetime.now(), '|| ERROR MESSAGE:', e)
-
-            return e
-
-
 class EDA():
 
     def correlation_analysis(data, num_cols, univariate = False):
@@ -176,6 +131,76 @@ class FeatureEng():
         scaled_df = transformer.fit_transform(data.loc[:,column_names])
 
         return pd.DataFrame(scaled_df, columns = [tag + col for col in column_names])
+
+
+class Load():
+
+    def import_all_data(search_text):
+        try:
+            retd = {}
+
+            # IMPORT DATA DICTIONARY #
+            ret1, df1 = import_data_dictionary()
+
+            retd['ret1'] = ret1
+
+            if ret1 == 0:
+                print('||MSG', datetime.now(), '|| SHAPE:', df1.shape)
+
+            # IMPORT ALL RAW DATA #
+            ret2, df2 = import_raw_data()
+
+            retd['ret2'] = ret2
+
+            if ret2 == 0:
+                print('||MSG', datetime.now(), '|| SHAPE:', df2.shape)
+
+            # IMPORT PITCHER DATA #
+            ret3, df3 = import_pitcher_data(search_text)
+
+            retd['ret3'] = ret3
+
+            if ret3 == 0:
+                print('||MSG', datetime.now(), '|| SHAPE:', df3.shape)
+
+            s = retd.values()
+
+            if 1 in s:
+                raise 'ERROR IMPORTING MODEL DATA'
+
+            response = {'df_data_dictionary': df1, 'df_data': df2, 'df_data_pitcher': df3}
+
+            return response
+
+        except Exception as e:
+            print('||ERR', datetime.now(), '|| ERROR MESSAGE:', e)
+
+            return e
+
+
+class Model():
+
+    def num_pca_components(cum_sum, alpha):
+        threshold = 1 - alpha
+        n = 1
+
+        for i in cum_sum:
+            if i >= threshold:
+                
+                return n
+            
+            else:
+                n += 1
+
+    def pca_var_coverage(explained_var_cumsum):
+        plt.figure(figsize = (20,10))
+        x = np.arange(1, len(explained_var_cumsum) + 1, 1)
+        plt.plot(x, explained_var_cumsum)
+        
+        plt.title("Variance Coverage by Principal Components")
+        plt.xlabel("Number of Principal Components")
+        plt.ylabel("Variance Coverage Percentage")
+        plt.show()
 
 
 def import_data_dictionary():
