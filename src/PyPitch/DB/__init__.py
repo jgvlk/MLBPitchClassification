@@ -9,15 +9,20 @@ from sqlalchemy.orm import sessionmaker
 
 db_conn_str = r'DRIVER={/usr/local/Cellar/msodbcsql17/17.6.1.1/lib/libmsodbcsql.17.dylib};SERVER=10.0.1.3;DATABASE=MLBPitchClassification;UID=svc_MLBPitchClassification;PWD=datascience;'
 db_conn_str = quote_plus(db_conn_str)
-
 engine = create_engine("mssql+pyodbc:///?odbc_connect=%s" % db_conn_str)
-
 Session = sessionmaker(bind=engine)
+
+
+
+
 
 class SessionManager(object):
     def __init__(self):
         self.session = Session()
         self.engine = engine
+
+
+
 
 
 def query_data_dictionary():
@@ -31,6 +36,9 @@ def query_data_dictionary():
     db.session.commit()
 
     return 0, df
+
+
+
 
 
 def query_raw_data():
@@ -67,6 +75,9 @@ def query_raw_data():
         return 1, df
 
 
+
+
+
 def query_pitcher_data(search_text):
     '''
     Query pitch data for a specific pitcher
@@ -79,7 +90,7 @@ def query_pitcher_data(search_text):
         sql = 'SELECT * FROM [dbo].[MLBPitch_2019] WHERE [PitcherFullName] LIKE ?'
 
         player_name = search_text
-        query_arg = '%' + player_name + '%' 
+        query_arg = '%' + player_name + '%'
 
         print('||MSG', datetime.now(), '|| QUERYING PITCHER RECORD FOR:', player_name)
 
