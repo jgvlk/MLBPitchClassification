@@ -60,10 +60,12 @@
     <Folder Include="Schema" />
     <Folder Include="Schema\dbo" />
     <Folder Include="Schema\dbo\Tables" />
+    <Folder Include="Schema\output" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Schema\dbo\Tables\dbo.DataDictionary.sql" />
     <Build Include="Schema\dbo\Tables\dbo.MLBPitch_2019.sql" />
+    <Build Include="Schema\output\output.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalHost.publish.xml" />
