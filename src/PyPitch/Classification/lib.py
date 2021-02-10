@@ -1,15 +1,19 @@
 from datetime import datetime
+from pathlib import Path
+import pickle
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import pandas as pd
 import pandas_profiling
 from scipy.stats import zscore
 import seaborn as sns
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.decomposition import PCA
+from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.preprocessing import PowerTransformer, StandardScaler, MinMaxScaler
 
 from PyPitch.db import query_data_dictionary, query_raw_data, query_pitcher_data
 
@@ -100,9 +104,6 @@ class EDA():
         return 0
 
 
-
-
-
 class Load():
 
     def import_all_data(search_text):
@@ -148,9 +149,6 @@ class Load():
             return e
 
 
-
-
-
 class KMeansModel():
 
     def __init__(self, n_clust):
@@ -158,7 +156,10 @@ class KMeansModel():
         self.kmeans = KMeans(n_clust, random_state=True)
 
 
-    def run_kmeans(self, data):
+    def kmeans_fit_predict(self, data):
+        '''
+        '''
+
         _kmeans = self.kmeans
 
         _kmeans.fit(data)
@@ -168,21 +169,35 @@ class KMeansModel():
         return labels, centers
 
 
-    def kmeans_predict(self, data, features):
+    def kmeans_predict(self, data):
+        '''
+        '''
+
         _kmeans = self.kmeans
 
-        labels = _kmeans.predict(data[features])
+        labels = _kmeans.predict(data)
 
         return labels
 
 
-    def pca_fit(self, data, features):
+    def pca_fit_transform(self, data, features):
         '''
-        TO DO: Create options to fit, transform, fit_transform, untransform, etc...
+        This method applies a PCA transformation fit to training data
         '''
 
         _pca = self.pca
-        data_pca_fit = _pca.fit_transform(data[features])
+        data_pca_fit_transform = _pca.fit_transform(data[features])
+
+        return data_pca_fit_transform
+
+
+    def pca_transform(self, data, features):
+        '''
+        This method applies pca transformation that was previously fit to training data
+        '''
+
+        _pca = self.pca
+        data_pca_fit = _pca.transform(data[features])
 
         return data_pca_fit
 
@@ -190,7 +205,7 @@ class KMeansModel():
     def elbow_plot(self, data, cluster_range):
         cluster_results = []
         cluster_range_list = []
-        
+
         for c in range(cluster_range[0],cluster_range[1] + 1):
             kmeans = KMeans(n_clusters=c, random_state=True)
             kmeans.fit(data)
@@ -239,20 +254,20 @@ class KMeansModel():
 
             # Check if there are NaNs in z_score
             if data['z_score'].isnull().sum() > 0:
-                print('WARNING: NaNs found in data column: {}. More analysis may be necessary to ensure there are not outliers'.format(column))
+                print('||WARN', datetime.now(), '|| NaNs found in data column: {}. More analysis may be necessary to ensure there are not outliers'.format(column))
 
             # Determine if there are outliers, as defined by z_score threshold
             outliers = data.loc[data.z_score > std_thresh, [column, 'z_score']]
 
             # If there are no outliers
             if outliers.shape[0] == 0:
-                print('No outliers for column {} at threshold of {} stdevs'.format(column, std_thresh))
+                print('||MSG', datetime.now(), '|| No outliers for column {} at threshold of {} stdevs'.format(column, std_thresh))
 
                 d_outliers[column] = []
 
             # If there are outliers
             else:
-                print('{} outlier(s) found for column {} at threshold of {} stdevs'.format(outliers.shape[0], column, std_thresh))
+                print('||MSG', datetime.now(), '|| {} outlier(s) found for column {} at threshold of {} stdevs'.format(outliers.shape[0], column, std_thresh))
 
                 l_column_outliers = []
                 for i,r in outliers.iterrows():
@@ -401,16 +416,148 @@ class KMeansModel():
         return df
 
 
+class Pipeline():
 
+    def __init__(self):
+        '''
+        Define Pipeline() instance transformers/scalers
+        '''
+
+        self.pt = PowerTransformer(method='yeo-johnson', standardize=False,)
+        self.ss = StandardScaler()
+        self.mm = MinMaxScaler()
+
+
+    def fit_transform_data(self, data, features):
+        '''
+        This method applies an optimal power transformation via Yeo-Johnson method, then standardizes and normalizes
+        '''
+
+        _pt = self.pt
+        _ss = self.ss
+        _mm = self.mm
+
+        # YEO-JOHNSON POWER TRANSFORMATION #
+        yeojt = _pt.fit(data[features])
+        yeojt = _pt.transform(data[features])
+        df_yeojt = pd.DataFrame(yeojt, columns=features)
+
+        # STANDARDIZE & NORMALIZE #
+        df_std = pd.DataFrame(_ss.fit_transform(df_yeojt[features]), columns=features)
+        df_std_norm = pd.DataFrame(_mm.fit_transform(df_std[features]), columns=features)
+
+        # FORMAT RETURN DATA #
+        df = data.drop(labels=features, axis=1)
+        df = df.join(df_std_norm)
+
+        return df
+
+
+    def transform_data(self, data, features):
+        '''
+        This method applies data transformations that were previously fit to training data
+        '''
+
+        _pt = self.pt
+        _ss = self.ss
+        _mm = self.mm
+
+        # YEO-JOHNSON POWER TRANSFORMATION #
+        yeojt = _pt.transform(data[features])
+        df_yeojt = pd.DataFrame(yeojt, columns=features)
+
+        # STANDARDIZE & NORMALIZE #
+        df_std = pd.DataFrame(_ss.transform(df_yeojt[features]), columns=features)
+        df_std_norm = pd.DataFrame(_mm.transform(df_std[features]), columns=features)
+
+        # FORMAT RETURN DATA #
+        df = data.drop(labels=features, axis=1)
+        df = df.join(df_std_norm)
+
+        return df
+
+
+    def load_model_data(repo_dir, model_version):
+        '''
+        TO DO:
+        - Check if pkl files exist, don't load if they already exist
+        - Parameterize player data import, make optional to import one player
+        '''
+
+        repo = Path(repo_dir)
+        data_output = repo / 'src/PyPitch/output' / model_version / 'data'
+
+        # LOAD RAW DATA #
+        data = Load.import_all_data('Lester')
+
+        df_data_dictionary = data['df_data_dictionary']
+        df_data = data['df_data']
+
+        df_data_R = df_data.loc[df_data['PitcherThrows'] == 'R']
+        df_data_R = df_data_R.reset_index()
+        df_data_R = df_data_R.drop(labels=['index'], axis=1)
+
+        df_data_L = df_data.loc[df_data['PitcherThrows'] == 'L']
+        df_data_L = df_data_L.reset_index()
+        df_data_L = df_data_L.drop(labels=['index'], axis=1)
+
+        # DEFINE FEATURES #
+        l_cols = []
+        for i in df_data.columns:
+            l_cols.append(i)
+
+        l_keep_cols = ['ID', 'PitcherThrows']
+        for i,r in df_data_dictionary['ColumnName'].iteritems():
+            l_keep_cols.append(r)
+
+        l_drop_cols = list(set(l_cols) - set(l_keep_cols))
+        l_drop_cols.append('y0')
+        # l_drop_cols.append('pfx_x')
+        # l_drop_cols.append('pfx_z')
+        l_drop_cols.append('Break_y')
+        l_drop_cols.append('BreakAngle')
+        l_drop_cols.append('BreakLength')
+        # l_drop_cols.append('StartSpeed')
+        # l_drop_cols.append('EndSpeed')
+        l_drop_cols.append('sz_bot')
+        l_drop_cols.append('sz_top')
+        l_drop_cols.append('PitcherThrows')
+
+        df = df_data.drop(labels=l_drop_cols, axis=1)
+        df_R = df_data_R.drop(labels=l_drop_cols, axis=1)
+        df_L = df_data_L.drop(labels=l_drop_cols, axis=1)
+
+        features = []
+        cols = df.columns
+
+        for i in cols:
+            if i != 'ID':
+                features.append(i)
+
+        df_features = pd.DataFrame(features)
+
+        df_out_file = data_output / 'df.pkl'
+        df_R_out_file = data_output / 'df_R.pkl'
+        df_L_out_file = data_output / 'df_L.pkl'
+        df_features_out_file = data_output / 'features.pkl'
+
+        df.to_pickle(df_out_file)
+        df_R.to_pickle(df_R_out_file)
+        df_L.to_pickle(df_L_out_file)
+        df_features.to_pickle(df_features_out_file)
+
+        return 0
+
+
+def save_pickle(out_file, pyobj):
+    pkl_file = open(out_file, 'wb')
+    pickle.dump(pyobj, pkl_file)
 
 
 def import_data_dictionary():
     ret, df = query_data_dictionary()
 
     return 0, df
-
-
-
 
 
 def import_pitcher_data(search_text):
@@ -438,9 +585,6 @@ def import_pitcher_data(search_text):
         return 1, df
 
 
-
-
-
 def import_raw_data():
     '''
     Import raw dataset from sql instance
@@ -464,4 +608,16 @@ def import_raw_data():
         df = pd.DataFrame(None)
 
         return 1, df
+
+
+def show_release_point(x, y, z, color):
+    fig_release_point = plt.figure()
+    ax = Axes3D(fig_release_point)
+    ax.scatter(x, y, z, color)
+    plt.show()
+
+
+def show_pitch_location(x, z, color):
+    plt.scatter(x, z, c=color)
+    plt.show()
 
