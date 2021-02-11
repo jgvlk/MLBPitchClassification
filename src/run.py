@@ -13,3 +13,7 @@ if __name__ == '__main__':
     else:
         end = datetime.now()
         print('||ERR', end, '|| ''PyPitch'' MODULE FINISHED WITH ERRORS')
+
+    runtime = end - start
+    print('||ERR', datetime.now(), '|| RUNTIME:', runtime)
+
