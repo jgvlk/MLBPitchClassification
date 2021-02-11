@@ -25,6 +25,12 @@
           <AssociatedConnUserName />
           <FullPath>EDA.sql</FullPath>
         </FileNode>
+        <FileNode Name="ModelAnalysis.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:JVLK-SERVER02:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>JVLK-SERVER02</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>ModelAnalysis.sql</FullPath>
+        </FileNode>
         <FileNode Name="Queries.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:JVLK-SERVER02:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>JVLK-SERVER02</AssociatedConnSrvName>

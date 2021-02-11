@@ -44,6 +44,49 @@ FROM
 	[output].[Model_v1_Test_R_Labeled] test
 	JOIN [dbo].[MLBPitch_2019] p ON test.[ID] = p.[ID]
 
+-- Cluster means
+SELECT
+	test.[Label_R]
+	,AVG(p.[ax0]) [ax0]
+	,AVG(p.[ay0]) [ay0]
+	,AVG(p.[az0]) [az0]
+	,AVG(p.[StartSpeed]) [StartSpeed]
+	,AVG(p.[EndSpeed]) [EndSpeed]
+	,AVG(p.[pfx_x]) [pfx_x]
+	,AVG(p.[pfx_z]) [pfx_z]
+	,AVG(p.[px]) [px]
+	,AVG(p.[pz]) [pz]
+	,AVG(p.[vx0]) [vx0]
+	,AVG(p.[vy0]) [vy0]
+	,AVG(p.[vz0]) [vz0]
+	,AVG(p.[x0]) [x0]
+	,AVG(p.[z0]) [z0]
+FROM
+	[output].[Model_v1_Test_R_Labeled] test
+	JOIN [dbo].[MLBPitch_2019] p ON test.[ID] = p.[ID]
+GROUP BY
+	test.[Label_R]
+ORDER BY
+	test.[Label_R]
 
-SELECT * FROM #LabeledPitchData_Test
 
+-- Population Means
+SELECT
+	AVG(p.[ax0]) [ax0]
+	,AVG(p.[ay0]) [ay0]
+	,AVG(p.[az0]) [az0]
+	,AVG(p.[StartSpeed]) [StartSpeed]
+	,AVG(p.[EndSpeed]) [EndSpeed]
+	,AVG(p.[pfx_x]) [pfx_x]
+	,AVG(p.[pfx_z]) [pfx_z]
+	,AVG(p.[px]) [px]
+	,AVG(p.[pz]) [pz]
+	,AVG(p.[vx0]) [vx0]
+	,AVG(p.[vy0]) [vy0]
+	,AVG(p.[vz0]) [vz0]
+	,AVG(p.[x0]) [x0]
+	,AVG(p.[z0]) [z0]
+FROM
+	[dbo].[MLBPitch_2019] p
+WHERE
+	[PitcherThrows]	 = 'R'
