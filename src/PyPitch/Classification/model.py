@@ -40,20 +40,20 @@ def run_model():
         # LOAD RAW DATA AND SUMMARIZE #
         print('||MSG', datetime.now(), '|| IMPORTING MODEL DATA')
 
-        # Pipeline.load_model_data(repo, version)
+        Pipeline.load_model_data(repo, version)
 
-        if os.name == 'posix':
-            df = pd.read_pickle(r'/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df.pkl')
-            df_R = pd.read_pickle(r'/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df_R.pkl')
-            df_L = pd.read_pickle(r'/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df_L.pkl')
-            features = pd.read_pickle(r'/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/features.pkl')
-        else:
-            df = pd.read_pickle(r'C:\Users\jonat\source\repos\MLBPitchClassification\src\PyPitch\output\v1\data\df.pkl')
-            df_R = pd.read_pickle(r'C:\Users\jonat\source\repos\MLBPitchClassification\src\PyPitch\output\v1\data\df_R.pkl')
-            df_L = pd.read_pickle(r'C:\Users\jonat\source\repos\MLBPitchClassification\src\PyPitch\output\v1\data\df_L.pkl')
-            features = pd.read_pickle(r'C:\Users\jonat\source\repos\MLBPitchClassification\src\PyPitch\output\v1\\data\features.pkl')
+        df_pkl_path = repo / 'src/PyPitch/output' / version / 'data/df.pkl'
+        df_R_pkl_path = repo / 'src/PyPitch/output' / version / 'data/df_R.pkl'
+        df_L_pkl_path = repo / 'src/PyPitch/output' / version / 'data/df_L.pkl'
+        features_pkl_path = repo / 'src/PyPitch/output' / version / 'data/features.pkl'
+
+        df = pd.read_pickle(df_pkl_path)
+        df_R = pd.read_pickle(df_R_pkl_path)
+        df_L = pd.read_pickle(df_L_pkl_path)
+        features = pd.read_pickle(features_pkl_path)
 
         features = list(features['feature'])
+
 
         # TRAIN/TEST SPLIT AND SUMMARIZE #
         print('||MSG', datetime.now(), '|| CREATING TRAIN & TEST DATASETS')
@@ -236,8 +236,6 @@ def run_model():
         save_pickle(pipeline_out, pipeline)
         save_pickle(pipelineR_out, pipelineR)
         save_pickle(pipelineL_out, pipelineL)
-
-
 
 
         return 0
