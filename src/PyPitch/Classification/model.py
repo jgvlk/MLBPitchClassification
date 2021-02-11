@@ -10,21 +10,35 @@ from PyPitch.classification.lib import KMeansModel, Pipeline, save_pickle
 from PyPitch.db import SessionManager
 
 
-def run_model():
+def run_model(repo_dir, model_version, model_test_ratio, model_outlier_std_thresh):
+    '''
+    TO DO: Create args to pass into module -> repo, version, test_ratio, outlier_std_thresh, clusters
+    '''
 
     try:
 
         # SET PARAMETERS #
-        if os.name == 'posix':
-            repo = Path('/Users/jonathanvlk/dev/MLBPitchClassification')
-        else:
-            repo = Path('C:/Users/jonat/source/repos/MLBPitchClassification')
-
-        version = 'v1'
-        test_ratio = .7
-        outlier_std_thresh = 6
-        pca_alpha = .01
+        repo = Path(repo_dir)
+        version = model_version
+        test_ratio = model_test_ratio
+        outlier_std_thresh = model_outlier_std_thresh
+        
         clusters = 4 #Aiming to identify top level pitch classes -> FB, CH, SL (sideways break), CV (vertical break)
+        pca_alpha = .01 #Constant
+
+        version_out_dir = repo / 'src/PyPitch/output' / version
+
+
+        # CREATE OUTPUT DIRECTORIES #
+        print('||MSG', datetime.now(), '|| CREATING OUTPUT DIR:', version_out_dir)
+
+        if not os.path.exists(version_out_dir):
+            data_out_dir = repo / 'src/PyPitch/output' / version / 'data'
+            viz_out_dir = repo / 'src/PyPitch/output' / version / 'viz'
+
+            os.mkdir(version_out_dir)
+            os.mkdir(data_out_dir)
+            os.mkdir(viz_out_dir)
 
 
         # INSTANTIATE PIPELINES AND CLUSTERING MODELS #
@@ -124,7 +138,6 @@ def run_model():
 
 
         # LABEL TEST DATA #
-        # TO DO: Cross-label data for cross-model analysis
         print('||MSG', datetime.now(), '|| LABELING TEST DATASETS')
 
         df_test = pipeline.transform_data(df_test, features)
