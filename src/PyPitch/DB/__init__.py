@@ -77,7 +77,7 @@ def query_pitcher_data(search_text):
         player_name = search_text
         query_arg = '%' + player_name + '%'
 
-        print('||MSG', datetime.now(), '|| QUERYING PITCHER RECORD FOR:', player_name)
+        print('||MSG', datetime.now(), '|| QUERYING PITCHER RECORD FOR', player_name)
 
         df = pd.read_sql(sql, conn, params=[query_arg])
 

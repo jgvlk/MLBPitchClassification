@@ -15,5 +15,5 @@ if __name__ == '__main__':
         print('||ERR', end, '|| ''PyPitch'' MODULE FINISHED WITH ERRORS')
 
     runtime = end - start
-    print('||ERR', datetime.now(), '|| RUNTIME:', runtime)
+    print('||MSG', datetime.now(), '|| RUNTIME:', runtime)
 

@@ -40,7 +40,7 @@ def run_model():
         # LOAD RAW DATA AND SUMMARIZE #
         print('||MSG', datetime.now(), '|| IMPORTING MODEL DATA')
 
-        Pipeline.load_model_data(repo, version)
+        # Pipeline.load_model_data(repo, version)
 
         if os.name == 'posix':
             df = pd.read_pickle(r'/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df.pkl')
@@ -168,7 +168,7 @@ def run_model():
         df_L_test_labeled = df_L_test_labeled.join(df_L_test_labels_xR)
 
 
-        # OUTPUT RESULTS TO DB #
+        # OUTPUT RESULTS TO DB/CSV #
         print('||MSG', datetime.now(), '|| WRITING RESULTS TO DB')
 
         db = SessionManager()
@@ -196,8 +196,29 @@ def run_model():
 
         db.session.commit()
 
+        csv_name_train = 'Model_' + version + '_Train_All_Labeled.csv'
+        csv_name_train_R = 'Model_' + version + '_Train_R_Labeled.csv'
+        csv_name_train_L = 'Model_' + version + '_Train_L_Labeled.csv'
+        csv_name_test = 'Model_' + version + '_Test_All_Labeled.csv'
+        csv_name_test_R = 'Model_' + version + '_Test_R_Labeled.csv'
+        csv_name_test_L = 'Model_' + version + '_Test_L_Labeled.csv'
 
-        # SAVE MODEL AND PIPELINE OBJECTS #
+        csv_path_train = repo / 'src/PyPitch/output' / version / 'data' / csv_name_train
+        csv_path_train_R = repo / 'src/PyPitch/output' / version / 'data' / csv_name_train_R
+        csv_path_train_L = repo / 'src/PyPitch/output' / version / 'data' / csv_name_train_L
+        csv_path_test = repo / 'src/PyPitch/output' / version / 'data' / csv_name_test
+        csv_path_test_R = repo / 'src/PyPitch/output' / version / 'data' / csv_name_test_R
+        csv_path_test_L = repo / 'src/PyPitch/output' / version / 'data' / csv_name_test_L
+
+        df_train_labeled.to_csv(csv_path_train)
+        df_R_train_labeled.to_csv(csv_path_train_R)
+        df_L_train_labeled.to_csv(csv_path_train_L)
+        df_test_labeled.to_csv(csv_path_test)
+        df_R_test_labeled.to_csv(csv_path_test_R)
+        df_L_test_labeled.to_csv(csv_path_test_L)
+
+
+        # SAVE MODEL, OUTPUT DATA, AND PIPELINE OBJECTS #
         print('||MSG', datetime.now(), '|| SAVING PIPLINE AND MODEL CLASS INSTANCES')
 
         model_out = str(repo / 'src/PyPitch/output' / version / 'data/model.pkl')
@@ -215,6 +236,8 @@ def run_model():
         save_pickle(pipeline_out, pipeline)
         save_pickle(pipelineR_out, pipelineR)
         save_pickle(pipelineL_out, pipelineL)
+
+
 
 
         return 0
