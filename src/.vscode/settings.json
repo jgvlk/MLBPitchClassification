@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "/usr/local/miniconda3/envs/py38-pypitch/bin/python",
+    "python.pythonPath": "C:\\Users\\jonat\\.conda\\envs\\py38-pypitch\\python.exe",
     "python.linting.pylintEnabled": true
 }

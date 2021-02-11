@@ -37,13 +37,7 @@ def query_data_dictionary():
 
 def query_raw_data():
     '''
-    Query raw dataset
-    Returns: ret, df
-        - ret: return code, 0 for success, 1 for error
-        - df: dataframe containing raw data, None if error
-
-    TO DO:
-    - Give option to select top n rows
+    Query all raw data
     '''
 
     try:

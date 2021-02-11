@@ -534,7 +534,7 @@ class Pipeline():
             if i != 'ID':
                 features.append(i)
 
-        df_features = pd.DataFrame(features)
+        df_features = pd.DataFrame(features, columns=['feature'])
 
         df_out_file = data_output / 'df.pkl'
         df_R_out_file = data_output / 'df_R.pkl'

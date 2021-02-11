@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -14,7 +15,11 @@ def run_model():
     try:
 
         # SET PARAMETERS #
-        repo = Path('/Users/jonathanvlk/dev/MLBPitchClassification')
+        if os.name == 'posix':
+            repo = Path('/Users/jonathanvlk/dev/MLBPitchClassification')
+        else:
+            repo = Path('C:/Users/jonat/source/repos/MLBPitchClassification')
+
         version = 'v1'
         test_ratio = .7
         outlier_std_thresh = 6
@@ -35,13 +40,20 @@ def run_model():
         # LOAD RAW DATA AND SUMMARIZE #
         print('||MSG', datetime.now(), '|| IMPORTING MODEL DATA')
 
-        # Pipeline.load_model_data(repo, version)
-        df = pd.read_pickle('/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df.pkl')
-        df_R = pd.read_pickle('/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df_R.pkl')
-        df_L = pd.read_pickle('/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df_L.pkl')
-        features = pd.read_pickle('/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/features.pkl')
-        features = list(features['feature'])
+        Pipeline.load_model_data(repo, version)
 
+        if os.name == 'posix':
+            df = pd.read_pickle(r'/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df.pkl')
+            df_R = pd.read_pickle(r'/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df_R.pkl')
+            df_L = pd.read_pickle(r'/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df_L.pkl')
+            features = pd.read_pickle(r'/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/features.pkl')
+        else:
+            df = pd.read_pickle(r'C:\Users\jonat\source\repos\MLBPitchClassification\src\PyPitch\output\v1\data\df.pkl')
+            df_R = pd.read_pickle(r'C:\Users\jonat\source\repos\MLBPitchClassification\src\PyPitch\output\v1\data\df_R.pkl')
+            df_L = pd.read_pickle(r'C:\Users\jonat\source\repos\MLBPitchClassification\src\PyPitch\output\v1\data\df_L.pkl')
+            features = pd.read_pickle(r'C:\Users\jonat\source\repos\MLBPitchClassification\src\PyPitch\output\v1\\data\features.pkl')
+
+        features = list(features['feature'])
 
         # TRAIN/TEST SPLIT AND SUMMARIZE #
         print('||MSG', datetime.now(), '|| CREATING TRAIN & TEST DATASETS')
@@ -156,7 +168,7 @@ def run_model():
         df_L_test_labeled = df_L_test_labeled.join(df_L_test_labels_xR)
 
 
-        # OUTPUT RESULTS TO MSSQL #
+        # OUTPUT RESULTS TO DB #
         print('||MSG', datetime.now(), '|| WRITING RESULTS TO DB')
 
         db = SessionManager()
@@ -189,14 +201,12 @@ def run_model():
         print('||MSG', datetime.now(), '|| SAVING PIPLINE AND MODEL CLASS INSTANCES')
 
         model_out = str(repo / 'src/PyPitch/output' / version / 'data/model.pkl')
-        modelR_out = repo / 'src/PyPitch/output' / version / 'data/modelR.pkl'
-        modelL_out = repo / 'src/PyPitch/output' / version / 'data/modelL.pkl'
+        modelR_out = str(repo / 'src/PyPitch/output' / version / 'data/modelR.pkl')
+        modelL_out = str(repo / 'src/PyPitch/output' / version / 'data/modelL.pkl')
 
-        pipeline_out = repo / 'src/PyPitch/output' / version / 'data/pipeline.pkl'
-        pipelineR_out = repo / 'src/PyPitch/output' / version / 'data/pipelineR.pkl'
-        pipelineL_out = repo / 'src/PyPitch/output' / version / 'data/pipelineL.pkl'
-
-        str(model_out)
+        pipeline_out = str(repo / 'src/PyPitch/output' / version / 'data/pipeline.pkl')
+        pipelineR_out = str(repo / 'src/PyPitch/output' / version / 'data/pipelineR.pkl')
+        pipelineL_out = str(repo / 'src/PyPitch/output' / version / 'data/pipelineL.pkl')
 
         save_pickle(model_out, model)
         save_pickle(modelR_out, modelR)
