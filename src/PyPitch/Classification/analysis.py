@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sqlalchemy import event
 
-from PyPitch.db import Session, SessionManager
+from PyPitch.db import SessionManager
 
 
 db = SessionManager()
@@ -71,4 +71,40 @@ def pfx_scatter_labels(data, label_col_name):
 pfx_scatter_labels(df_pfx_v1, 'Label_R')
 pfx_scatter_labels(df_pfx_v2, 'Label_R')
 pfx_scatter_labels(df_pfx_v3, 'Label_R')
+
+
+
+
+fig, a = plt.subplots(4)
+
+pfx_x_0 = np.array(df_pfx_v3['pfx_x'].loc[df_pfx_v3['Label_R']==0])
+pfx_z_0 = np.array(df_pfx_v3['pfx_z'].loc[df_pfx_v3['Label_R']==0])
+
+pfx_x_1 = np.array(df_pfx_v3['pfx_x'].loc[df_pfx_v3['Label_R']==1])
+pfx_z_1 = np.array(df_pfx_v3['pfx_z'].loc[df_pfx_v3['Label_R']==1])
+
+pfx_x_2 = np.array(df_pfx_v3['pfx_x'].loc[df_pfx_v3['Label_R']==2])
+pfx_z_2 = np.array(df_pfx_v3['pfx_z'].loc[df_pfx_v3['Label_R']==2])
+
+pfx_x_3 = np.array(df_pfx_v3['pfx_x'].loc[df_pfx_v3['Label_R']==3])
+pfx_z_3 = np.array(df_pfx_v3['pfx_z'].loc[df_pfx_v3['Label_R']==3])
+
+a[0].scatter(pfx_x_0, pfx_z_0, c='red', label='0')
+a[0].set_title('Label: 0')
+
+a[1].scatter(pfx_x_1, pfx_z_1, c='green', label='1')
+a[1].set_title('Label: 1')
+
+a[2].scatter(pfx_x_2, pfx_z_2, c='blue', label='2')
+a[2].set_title('Label: 2')
+
+a[3].scatter(pfx_x_3, pfx_z_3, c='purple', label='3')
+a[3].set_title('Label: 3')
+
+for i in a.flat:
+    i.set(xlabel='Horizontal Movement (in)', ylabel='Vertical Movement (in)')
+
+fig.tight_layout()
+
+plt.show()
 
