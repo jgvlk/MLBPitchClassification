@@ -23,16 +23,32 @@ class SessionManager(object):
 
 
 def query_data_dictionary():
-    db = SessionManager()
-    conn = db.session.connection()
+    '''
+    Query data dictionary pre-defined in DB
 
-    sql = 'SELECT * FROM [dbo].[DataDictionary] WHERE [Include] = 1 ORDER BY [ColumnName]'
+    '''
 
-    df = pd.read_sql(sql, conn)
+    try:
+        db = SessionManager()
+        conn = db.session.connection()
 
-    db.session.commit()
+        print('||MSG', datetime.now(), '|| QUERYING DATA DICTIONARY FROM DB')
 
-    return 0, df
+        sql = 'SELECT * FROM [dbo].[DataDictionary] WHERE [Include] = 1 ORDER BY [ColumnName]'
+
+        df = pd.read_sql(sql, conn)
+
+        db.session.commit()
+
+        return 0, df
+
+    except Exception as e:
+        print('||ERR', datetime.now(), '|| ERROR MESSAGE:', e)
+        print('||ERR', datetime.now(), '|| ERROR QUERYING DATA DICTIONARY FROM DB')
+
+        df = pd.DataFrame(None)
+
+        return 1, df
 
 
 def query_raw_data():
@@ -72,12 +88,12 @@ def query_pitcher_data(search_text):
         db = SessionManager()
         conn = db.session.connection()
 
+        print('||MSG', datetime.now(), '|| QUERYING PITCHER RECORD FOR', search_text)
+
         sql = 'SELECT * FROM [dbo].[MLBPitch_2019] WHERE [PitcherFullName] LIKE ?'
 
         player_name = search_text
         query_arg = '%' + player_name + '%'
-
-        print('||MSG', datetime.now(), '|| QUERYING PITCHER RECORD FOR', player_name)
 
         df = pd.read_sql(sql, conn, params=[query_arg])
 

@@ -5,7 +5,6 @@ from pprint import pprint
 import pandas as pd
 
 from PyPitch.classification.lib import EDA
-from PyPitch.classification.pipeline import Pipeline
 
 
 # SET PARAMETERS #

@@ -53,11 +53,9 @@ class EDA():
                     var_pair = l[0] + '__' + l[1]
                     d[var_pair] = corr_value[i]
 
-        # Sort var pairs by correlation values
         d_sort_values = sorted(d.items(), key=lambda x: x[1], reverse=False)
         d_sort_values_rev = sorted(d.items(), key=lambda x: x[1], reverse=True)
 
-        # Define highest positive & negative correlations
         top10_neg = list(d_sort_values)[:10]
         top10_pos = list(d_sort_values_rev)[:10]
 
@@ -68,14 +66,10 @@ class EDA():
         df_describe = data.describe()
         df_describe.to_csv(out_file)
 
-        return 0
-
 
     def feature_density_plot(data):
         data.plot(kind='density', subplots=True, layout=(5,5), sharex=False, figsize=(15,10))
         plt.show()
-
-        return 0
 
 
     def null_check(data):
@@ -100,8 +94,6 @@ class EDA():
     def profile(data, out_file):
         profile = pandas_profiling.ProfileReport(data)
         profile.to_file(out_file)
-
-        return 0
 
 
 class Load():
@@ -156,93 +148,6 @@ class KMeansModel():
         self.kmeans = KMeans(n_clust, random_state=True)
 
 
-    def kmeans_fit_predict(self, data):
-        '''
-        '''
-
-        _kmeans = self.kmeans
-
-        _kmeans.fit(data)
-        labels = _kmeans.predict(data)
-        centers = _kmeans.cluster_centers_
-
-        return labels, centers
-
-
-    def kmeans_predict(self, data):
-        '''
-        '''
-
-        _kmeans = self.kmeans
-
-        labels = _kmeans.predict(data)
-
-        return labels
-
-
-    def pca_fit_transform(self, data, features):
-        '''
-        This method applies a PCA transformation fit to training data
-        '''
-
-        _pca = self.pca
-        data_pca_fit_transform = _pca.fit_transform(data[features])
-
-        return data_pca_fit_transform
-
-
-    def pca_transform(self, data, features):
-        '''
-        This method applies pca transformation that was previously fit to training data
-        '''
-
-        _pca = self.pca
-        data_pca_fit = _pca.transform(data[features])
-
-        return data_pca_fit
-
-
-    def elbow_plot(self, data, cluster_range):
-        cluster_results = []
-        cluster_range_list = []
-
-        for c in range(cluster_range[0],cluster_range[1] + 1):
-            kmeans = KMeans(n_clusters=c, random_state=True)
-            kmeans.fit(data)
-            distance = kmeans.inertia_
-            cluster_range_list.append(c)
-            cluster_results.append(distance)
-
-        plt.figure(figsize = (20,10))
-        plt.plot(cluster_range_list, cluster_results)
-        plt.xlabel("Number of Clusters")
-        plt.ylabel("Sum of Squared Distances")
-        plt.title("Elbow Plot for K-means Clustering")
-        plt.show()
-
-
-    def num_pca_components(self, cum_sum, alpha):
-        threshold = 1 - alpha
-        n = 1
-
-        for i in cum_sum:
-            if i >= threshold:
-                return n
-            else:
-                n += 1
-
-
-    def pca_var_coverage(self, explained_var_cumsum):
-        plt.figure(figsize = (20,10))
-        x = np.arange(1, len(explained_var_cumsum) + 1, 1)
-        plt.plot(x, explained_var_cumsum)
-
-        plt.title("Variance Coverage by Principal Components")
-        plt.xlabel("Number of Principal Components")
-        plt.ylabel("Variance Coverage Percentage")
-        plt.show()
-
-
     def detect_outliers(self, data, features, std_thresh = 6):
 
         d_outliers = {}
@@ -279,6 +184,116 @@ class KMeansModel():
             data.drop('z_score', axis = 1, inplace = True)
 
         return d_outliers
+
+
+    def elbow_plot(self, data, cluster_range):
+        cluster_results = []
+        cluster_range_list = []
+
+        for c in range(cluster_range[0],cluster_range[1] + 1):
+            kmeans = KMeans(n_clusters=c, random_state=True)
+            kmeans.fit(data)
+            distance = kmeans.inertia_
+            cluster_range_list.append(c)
+            cluster_results.append(distance)
+
+        plt.figure(figsize = (20,10))
+        plt.plot(cluster_range_list, cluster_results)
+        plt.xlabel("Number of Clusters")
+        plt.ylabel("Sum of Squared Distances")
+        plt.title("Elbow Plot for K-means Clustering")
+        plt.show()
+
+
+    def kmeans_fit_predict(self, data):
+        '''
+        '''
+
+        _kmeans = self.kmeans
+
+        _kmeans.fit(data)
+        labels = _kmeans.predict(data)
+        centers = _kmeans.cluster_centers_
+
+        return labels, centers
+
+
+    def kmeans_predict(self, data):
+        '''
+        '''
+
+        _kmeans = self.kmeans
+
+        labels = _kmeans.predict(data)
+
+        return labels
+
+
+    def num_pca_components(self, cum_sum, alpha):
+        threshold = 1 - alpha
+        n = 1
+
+        for i in cum_sum:
+            if i >= threshold:
+                return n
+            else:
+                n += 1
+
+
+    def pca_fit_transform(self, data, features):
+        '''
+        This method applies a PCA transformation fit to training data
+        '''
+
+        _pca = self.pca
+        data_pca_fit_transform = _pca.fit_transform(data[features])
+
+        return data_pca_fit_transform
+
+
+    def pca_transform(self, data, features):
+        '''
+        This method applies pca transformation that was previously fit to training data
+        '''
+
+        _pca = self.pca
+        data_pca_fit = _pca.transform(data[features])
+
+        return data_pca_fit
+
+
+    def pca_var_coverage(self, explained_var_cumsum):
+        plt.figure(figsize = (20,10))
+        x = np.arange(1, len(explained_var_cumsum) + 1, 1)
+        plt.plot(x, explained_var_cumsum)
+
+        plt.title("Variance Coverage by Principal Components")
+        plt.xlabel("Number of Principal Components")
+        plt.ylabel("Variance Coverage Percentage")
+        plt.show()
+
+
+    def remove_outliers(self, data, features, std_thresh):
+        outliers = KMeansModel.detect_outliers(self, data, features, std_thresh)
+
+        delete = []
+        w_outliers = len(data)
+        for i in outliers:
+            if outliers[i]:
+                for i in outliers[i]:
+                    delete.append(i['index'])
+
+        delete = list(set(delete))
+        data = data.drop(data.index[delete])
+        wo_outliers = len(data)
+        outliers_removed = w_outliers - wo_outliers
+
+        df = data.reset_index()
+        df = df.drop(labels=['index'], axis=1)
+
+        print('||MSG', datetime.now(), '||', outliers_removed, 'OUTLIERS REMOVED')
+
+        return df
 
 
     def silhouette_viz(self, train_data, model, num_clusters, x_feature_index = 1, y_feature_index = 2):
@@ -393,29 +408,6 @@ class KMeansModel():
         return df_train, df_test
 
 
-    def remove_outliers(self, data, features, std_thresh):
-        outliers = KMeansModel.detect_outliers(self, data, features, std_thresh)
-
-        delete = []
-        w_outliers = len(data)
-        for i in outliers:
-            if outliers[i]:
-                for i in outliers[i]:
-                    delete.append(i['index'])
-
-        delete = list(set(delete))
-        data = data.drop(data.index[delete])
-        wo_outliers = len(data)
-        outliers_removed = w_outliers - wo_outliers
-
-        df = data.reset_index()
-        df = df.drop(labels=['index'], axis=1)
-
-        print('||MSG', datetime.now(), '||', outliers_removed, 'OUTLIERS REMOVED')
-
-        return df
-
-
 class Pipeline():
 
     def __init__(self):
@@ -445,30 +437,6 @@ class Pipeline():
         # STANDARDIZE & NORMALIZE #
         df_std = pd.DataFrame(_ss.fit_transform(df_yeojt[features]), columns=features)
         df_std_norm = pd.DataFrame(_mm.fit_transform(df_std[features]), columns=features)
-
-        # FORMAT RETURN DATA #
-        df = data.drop(labels=features, axis=1)
-        df = df.join(df_std_norm)
-
-        return df
-
-
-    def transform_data(self, data, features):
-        '''
-        This method applies data transformations that were previously fit to training data
-        '''
-
-        _pt = self.pt
-        _ss = self.ss
-        _mm = self.mm
-
-        # YEO-JOHNSON POWER TRANSFORMATION #
-        yeojt = _pt.transform(data[features])
-        df_yeojt = pd.DataFrame(yeojt, columns=features)
-
-        # STANDARDIZE & NORMALIZE #
-        df_std = pd.DataFrame(_ss.transform(df_yeojt[features]), columns=features)
-        df_std_norm = pd.DataFrame(_mm.transform(df_std[features]), columns=features)
 
         # FORMAT RETURN DATA #
         df = data.drop(labels=features, axis=1)
@@ -511,7 +479,7 @@ class Pipeline():
             l_keep_cols.append(r)
 
         l_drop_cols = list(set(l_cols) - set(l_keep_cols))
-        
+
         l_drop_cols.append('PitcherThrows')
         l_drop_cols.append('sz_bot')
         l_drop_cols.append('sz_top')
@@ -557,12 +525,94 @@ class Pipeline():
         df_L.to_pickle(df_L_out_file)
         df_features.to_pickle(df_features_out_file)
 
-        return 0
+
+    def transform_data(self, data, features):
+        '''
+        This method applies data transformations that were previously fit to training data
+        '''
+
+        _pt = self.pt
+        _ss = self.ss
+        _mm = self.mm
+
+        # YEO-JOHNSON POWER TRANSFORMATION #
+        yeojt = _pt.transform(data[features])
+        df_yeojt = pd.DataFrame(yeojt, columns=features)
+
+        # STANDARDIZE & NORMALIZE #
+        df_std = pd.DataFrame(_ss.transform(df_yeojt[features]), columns=features)
+        df_std_norm = pd.DataFrame(_mm.transform(df_std[features]), columns=features)
+
+        # FORMAT RETURN DATA #
+        df = data.drop(labels=features, axis=1)
+        df = df.join(df_std_norm)
+
+        return df
 
 
-def save_pickle(out_file, pyobj):
-    pkl_file = open(out_file, 'wb')
-    pickle.dump(pyobj, pkl_file)
+class Result():
+
+    def __init__(self, data, label_col_name):
+        self.data = data
+        self.labels = list(data[label_col_name].drop_duplicates())
+        self.colors = ['red', 'green', 'blue', 'purple']
+
+    def pfx_scatter_alllabels(self, data, label_col_name):
+        _data = self.data
+        _labels = self.labels
+        _colors = self.colors
+
+        fig, a = plt.subplots()
+
+        for color, label in zip(_colors, _labels):
+            pfx_x = np.array(_data['pfx_x'].loc[_data[label_col_name]==label])
+            pfx_z = np.array(_data['pfx_z'].loc[_data[label_col_name]==label])
+            a.scatter(pfx_x, pfx_z, c=color, label=label)
+
+        a.legend()
+        a.grid(True)
+        a.set(xlabel='Horizontal Movement', ylabel='Vertical Movement')
+
+        plt.show()
+
+
+    def pfx_scatter_bylabel(self, data, label_col_name):
+        _data = self.data
+        _labels = self.labels
+        _colors = self.colors
+
+        fig, a = plt.subplots(4)
+
+        pfx_x_0 = np.array(_data['pfx_x'].loc[_data[label_col_name]==_labels[0]])
+        pfx_z_0 = np.array(_data['pfx_z'].loc[_data[label_col_name]==_labels[0]])
+
+        pfx_x_1 = np.array(_data['pfx_x'].loc[_data[label_col_name]==_labels[1]])
+        pfx_z_1 = np.array(_data['pfx_z'].loc[_data[label_col_name]==_labels[1]])
+
+        pfx_x_2 = np.array(_data['pfx_x'].loc[_data[label_col_name]==_labels[2]])
+        pfx_z_2 = np.array(_data['pfx_z'].loc[_data[label_col_name]==_labels[2]])
+
+        pfx_x_3 = np.array(_data['pfx_x'].loc[_data[label_col_name]==_labels[3]])
+        pfx_z_3 = np.array(_data['pfx_z'].loc[_data[label_col_name]==_labels[3]])
+
+        a[0].scatter(pfx_x_0, pfx_z_0, c=_colors[0])
+        a[0].set_title('Label: {}'.format(_labels[0]))
+
+        a[1].scatter(pfx_x_1, pfx_z_1, c=_colors[1])
+        a[1].set_title('Label: {}'.format(_labels[1]))
+
+        a[2].scatter(pfx_x_2, pfx_z_2, c=_colors[2])
+        a[2].set_title('Label: {}'.format(_labels[2]))
+
+        a[3].scatter(pfx_x_3, pfx_z_3, c=_colors[3])
+        a[3].set_title('Label: {}'.format(_labels[3]))
+
+        for i in a.flat:
+            i.set(xlabel='Horizontal Movement (in)', ylabel='Vertical Movement (in)')
+
+        fig.tight_layout()
+
+        plt.show()
 
 
 def import_data_dictionary():
@@ -621,14 +671,20 @@ def import_raw_data():
         return 1, df
 
 
+def save_pickle(out_file, pyobj):
+    pkl_file = open(out_file, 'wb')
+    pickle.dump(pyobj, pkl_file)
+
+
+def show_pitch_location(x, z, color):
+    plt.scatter(x, z, c=color)
+    plt.show()
+
+
 def show_release_point(x, y, z, color):
     fig_release_point = plt.figure()
     ax = Axes3D(fig_release_point)
     ax.scatter(x, y, z, color)
     plt.show()
 
-
-def show_pitch_location(x, z, color):
-    plt.scatter(x, z, c=color)
-    plt.show()
 
