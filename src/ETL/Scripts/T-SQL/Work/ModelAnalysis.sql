@@ -164,3 +164,91 @@ GROUP BY
 ORDER BY
 	test.[Label_R]
 
+
+
+
+
+-- MLB Pitch Types
+SELECT
+	*
+FROM
+(
+	SELECT
+		*
+		,RANK() OVER ( PARTITION BY [Label_R] ORDER BY [Label_R], [ct] DESC ) AS [Rank] 
+	FROM
+	(
+		SELECT
+			test.[Label_R]
+			,p.[PitchType]
+			,pt.[description] AS [PitchDescription]
+			,COUNT(*) AS [ct]
+		FROM
+			[output].[Model_v1_Test_R_Labeled] test
+			JOIN [dbo].[MLBPitch_2019] p ON test.[ID] = p.[ID]
+			JOIN [PitchFX].[raw].[PitchType] pt ON p.[PitchType] = pt.[code]
+		GROUP BY
+			test.[Label_R]
+			,p.[PitchType]
+			,pt.[description]
+	) y
+) x
+WHERE
+	[Rank] = 1
+
+
+SELECT
+	*
+FROM
+(
+	SELECT
+		*
+		,RANK() OVER ( PARTITION BY [Label_R] ORDER BY [Label_R], [ct] DESC ) AS [Rank] 
+	FROM
+	(
+		SELECT
+			test.[Label_R]
+			,p.[PitchType]
+			,pt.[description] AS [PitchDescription]
+			,COUNT(*) AS [ct]
+		FROM
+			[output].[Model_v2_Test_R_Labeled] test
+			JOIN [dbo].[MLBPitch_2019] p ON test.[ID] = p.[ID]
+			JOIN [PitchFX].[raw].[PitchType] pt ON p.[PitchType] = pt.[code]
+		GROUP BY
+			test.[Label_R]
+			,p.[PitchType]
+			,pt.[description]
+	) y
+) x
+WHERE
+	[Rank] = 1
+
+
+SELECT
+	*
+FROM
+(
+	SELECT
+		*
+		,RANK() OVER ( PARTITION BY [Label_R] ORDER BY [Label_R], [ct] DESC ) AS [Rank] 
+	FROM
+	(
+		SELECT
+			test.[Label_R]
+			,p.[PitchType]
+			,pt.[description] AS [PitchDescription]
+			,COUNT(*) AS [ct]
+		FROM
+			[output].[Model_v3_Test_R_Labeled] test
+			JOIN [dbo].[MLBPitch_2019] p ON test.[ID] = p.[ID]
+			JOIN [PitchFX].[raw].[PitchType] pt ON p.[PitchType] = pt.[code]
+		GROUP BY
+			test.[Label_R]
+			,p.[PitchType]
+			,pt.[description]
+	) y
+) x
+WHERE
+	[Rank] = 1
+
