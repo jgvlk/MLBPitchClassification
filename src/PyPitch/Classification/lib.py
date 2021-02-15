@@ -572,7 +572,7 @@ class Result():
 
         a.legend()
         a.grid(True)
-        a.set(xlabel='Horizontal Movement', ylabel='Vertical Movement')
+        a.set(xlabel='Horizontal Movement (in.)', ylabel='Vertical Movement (in.)')
 
         plt.show()
 
@@ -609,7 +609,7 @@ class Result():
         a[3].set_title('Label: {}'.format(_labels[3]))
 
         for i in a.flat:
-            i.set(xlabel='Horizontal Movement (in)', ylabel='Vertical Movement (in)')
+            i.set(xlabel='Horizontal Movement (in.)', ylabel='Vertical Movement (in.)')
 
         fig.tight_layout()
 

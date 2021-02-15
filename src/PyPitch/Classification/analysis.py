@@ -53,6 +53,10 @@ df_pfx_v3 = pd.read_sql(sql_v3, conn)
 
 db.session.close()
 
+# df_pfx_v1.to_pickle('/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v1/data/df_results_pfx_labels_v1.pkl')
+# df_pfx_v2.to_pickle('/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v2/data/df_results_pfx_labels_v2.pkl')
+# df_pfx_v3.to_pickle('/Users/jonathanvlk/dev/MLBPitchClassification/src/PyPitch/output/v3/data/df_results_pfx_labels_v3.pkl')
+
 
 resultv1 = Result(df_pfx_v1, 'Label_R')
 resultv2 = Result(df_pfx_v2, 'Label_R')
