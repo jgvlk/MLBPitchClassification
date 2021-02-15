@@ -51,12 +51,18 @@ df_pfx_v1 = pd.read_sql(sql_v1, conn)
 df_pfx_v2 = pd.read_sql(sql_v2, conn)
 df_pfx_v3 = pd.read_sql(sql_v3, conn)
 
+db.session.close()
 
-Result.pfx_scatter_alllabels(df_pfx_v1, 'Label_R')
-Result.pfx_scatter_alllabels(df_pfx_v2, 'Label_R')
-Result.pfx_scatter_alllabels(df_pfx_v3, 'Label_R')
 
-Result.pfx_scatter_bylabel(df_pfx_v1, 'Label_R')
-Result.pfx_scatter_bylabel(df_pfx_v2, 'Label_R')
-Result.pfx_scatter_bylabel(df_pfx_v3, 'Label_R')
+resultv1 = Result(df_pfx_v1, 'Label_R')
+resultv2 = Result(df_pfx_v2, 'Label_R')
+resultv3 = Result(df_pfx_v3, 'Label_R')
+
+resultv1.pfx_scatter_alllabels()
+resultv2.pfx_scatter_alllabels()
+resultv3.pfx_scatter_alllabels()
+
+resultv1.pfx_scatter_bylabel()
+resultv2.pfx_scatter_bylabel()
+resultv3.pfx_scatter_bylabel()
 

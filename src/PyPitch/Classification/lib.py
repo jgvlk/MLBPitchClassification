@@ -554,10 +554,11 @@ class Result():
 
     def __init__(self, data, label_col_name):
         self.data = data
+        self.label_col_name = label_col_name
         self.labels = list(data[label_col_name].drop_duplicates())
         self.colors = ['red', 'green', 'blue', 'purple']
 
-    def pfx_scatter_alllabels(self, data, label_col_name):
+    def pfx_scatter_alllabels(self):
         _data = self.data
         _labels = self.labels
         _colors = self.colors
@@ -565,8 +566,8 @@ class Result():
         fig, a = plt.subplots()
 
         for color, label in zip(_colors, _labels):
-            pfx_x = np.array(_data['pfx_x'].loc[_data[label_col_name]==label])
-            pfx_z = np.array(_data['pfx_z'].loc[_data[label_col_name]==label])
+            pfx_x = np.array(_data['pfx_x'].loc[_data[self.label_col_name]==label])
+            pfx_z = np.array(_data['pfx_z'].loc[_data[self.label_col_name]==label])
             a.scatter(pfx_x, pfx_z, c=color, label=label)
 
         a.legend()
@@ -576,24 +577,24 @@ class Result():
         plt.show()
 
 
-    def pfx_scatter_bylabel(self, data, label_col_name):
+    def pfx_scatter_bylabel(self):
         _data = self.data
         _labels = self.labels
         _colors = self.colors
 
         fig, a = plt.subplots(4)
 
-        pfx_x_0 = np.array(_data['pfx_x'].loc[_data[label_col_name]==_labels[0]])
-        pfx_z_0 = np.array(_data['pfx_z'].loc[_data[label_col_name]==_labels[0]])
+        pfx_x_0 = np.array(_data['pfx_x'].loc[_data[self.label_col_name]==_labels[0]])
+        pfx_z_0 = np.array(_data['pfx_z'].loc[_data[self.label_col_name]==_labels[0]])
 
-        pfx_x_1 = np.array(_data['pfx_x'].loc[_data[label_col_name]==_labels[1]])
-        pfx_z_1 = np.array(_data['pfx_z'].loc[_data[label_col_name]==_labels[1]])
+        pfx_x_1 = np.array(_data['pfx_x'].loc[_data[self.label_col_name]==_labels[1]])
+        pfx_z_1 = np.array(_data['pfx_z'].loc[_data[self.label_col_name]==_labels[1]])
 
-        pfx_x_2 = np.array(_data['pfx_x'].loc[_data[label_col_name]==_labels[2]])
-        pfx_z_2 = np.array(_data['pfx_z'].loc[_data[label_col_name]==_labels[2]])
+        pfx_x_2 = np.array(_data['pfx_x'].loc[_data[self.label_col_name]==_labels[2]])
+        pfx_z_2 = np.array(_data['pfx_z'].loc[_data[self.label_col_name]==_labels[2]])
 
-        pfx_x_3 = np.array(_data['pfx_x'].loc[_data[label_col_name]==_labels[3]])
-        pfx_z_3 = np.array(_data['pfx_z'].loc[_data[label_col_name]==_labels[3]])
+        pfx_x_3 = np.array(_data['pfx_x'].loc[_data[self.label_col_name]==_labels[3]])
+        pfx_z_3 = np.array(_data['pfx_z'].loc[_data[self.label_col_name]==_labels[3]])
 
         a[0].scatter(pfx_x_0, pfx_z_0, c=_colors[0])
         a[0].set_title('Label: {}'.format(_labels[0]))
