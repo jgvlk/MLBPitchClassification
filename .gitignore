@@ -353,3 +353,4 @@ MigrationBackup/
 .ionide/
 
 src/.vscode/
+MLBPitchData_2019.csv
