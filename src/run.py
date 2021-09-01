@@ -1,13 +1,13 @@
 from datetime import datetime
 import sys
 
-from PyPitch.classification.model import run_model
+from PyPitch.Classification.model import run_model
 
 
 if __name__ == '__main__':
     start = datetime.now()
     print('||MSG', start, '|| ''PyPitch'' MODULE STARTING')
-    
+
     args = sys.argv
     repo_dir = str(args[1])
     model_version = str(args[2])

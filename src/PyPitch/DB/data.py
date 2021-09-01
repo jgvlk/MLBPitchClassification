@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.PyPitch.db import query_raw_data
+from src.PyPitch.DB import query_raw_data
 
 
 ret, df = query_raw_data()
