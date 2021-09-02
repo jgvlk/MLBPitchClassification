@@ -15,7 +15,7 @@ from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.preprocessing import PowerTransformer, StandardScaler, MinMaxScaler
 
-from PyPitch.db import query_data_dictionary, query_raw_data, query_pitcher_data
+from PyPitch.DB import query_data_dictionary, query_raw_data, query_pitcher_data
 
 
 class EDA():
